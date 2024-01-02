@@ -11,6 +11,7 @@
 #include "Helper.mqh"
 #include "GlobalVar.mqh"
 #include "OpenCond.mqh"
+#include "CustomCriteria.mqh"
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -91,5 +92,39 @@ void OnTick()
       if(!NormalizePrice(tp)){return;}
       trade.PositionOpen(_Symbol,ORDER_TYPE_SELL,InpLotSize,cT.bid,sl,tp,"Stochastic EA");
    }
+}
+//+------------------------------------------------------------------+
+//| Expert Test function                                             |
+//+------------------------------------------------------------------+
+double OnTester()  
+{
+   double customPerformanceMetric;  
+   
+   if(InpCustomPerfCriterium == STANDARD_PROFIT_FACTOR)
+   {
+      customPerformanceMetric = TesterStatistics(STAT_PROFIT_FACTOR);
+   }
+   else if(InpCustomPerfCriterium == MODIFIED_PROFIT_FACTOR)
+   {
+      int numTrades = ModifiedProfitFactor(customPerformanceMetric);
+      
+      //IF NUMBER OF TRADES < 250 THEN NO STATISTICAL SIGNIFICANCE, SO DISREGARD RESULTS (PROBABLE THAT GOOD 
+      //RESULTS CAUSED BY RANDOM CHANCE / LUCK, THAT WOULD NOT BE REPEATABLE IN FUTURE PERFORMANCE)
+      if(numTrades < 250)
+         customPerformanceMetric = 0.0;
+   } 
+   else if(InpCustomPerfCriterium == NO_CUSTOM_METRIC)
+   {
+      customPerformanceMetric = 0.0;
+   }
+   else
+   {
+      Print("Error: Custom Performance Criterium requested (", EnumToString(InpCustomPerfCriterium), ") not implemented in OnTester()");
+      customPerformanceMetric = 0.0;
+   }
+   
+   Print("Custom Perfromance Metric = ", DoubleToString(customPerformanceMetric, 3));
+   
+   return customPerformanceMetric;
 }
 //+------------------------------------------------------------------+

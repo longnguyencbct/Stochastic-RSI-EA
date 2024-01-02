@@ -4,7 +4,18 @@ enum SIGNAL_MODE{
    EXIT_CROSS_REVERSED,    // exit cross reversed
    ENTRY_CROSS_REVERSED,   // entry cross reversed
 };
-
+enum ENUM_CUSTOM_PERF_CRITERIUM_METHOD
+{
+   NO_CUSTOM_METRIC,                            //No Custom Metric
+   STANDARD_PROFIT_FACTOR,                      //Standard Profit Factor
+   MODIFIED_PROFIT_FACTOR                       //Modified Profit Factor
+};
+enum ENUM_DIAGNOSTIC_LOGGING_LEVEL
+{
+   DIAG_LOGGING_NONE,                           //NONE
+   DIAG_LOGGING_LOW,                            //LOW - Major Diagnostics Only
+   DIAG_LOGGING_HIGH                            //HIGH - All Diagnostics (Warning - Use with caution)
+};
 //+------------------------------------------------------------------+
 //| Inputs                                                           |
 //+------------------------------------------------------------------+
@@ -12,6 +23,9 @@ input group "==== General ====";
 static input long       InpMagicNumber = 23857236;          // magicnumber
 static input double     InpLotSize     = 0.01;              // lot size
 input ENUM_TIMEFRAMES   InpTimeframe   = PERIOD_H1;         // timeframe
+input group "=== Custom Criteria ==="
+input ENUM_CUSTOM_PERF_CRITERIUM_METHOD   InpCustomPerfCriterium    = MODIFIED_PROFIT_FACTOR;   //Custom Performance Criterium
+input ENUM_DIAGNOSTIC_LOGGING_LEVEL       InpDiagnosticLoggingLevel = DIAG_LOGGING_LOW;         //Diagnostic Logging Level
 input group "==== Trading ====";
 input SIGNAL_MODE       InpSignalMode  = EXIT_CROSS_NORMAL; //signal mode
 input int               InpStopLoss    = 200;               // stop loss in points (0=off)
